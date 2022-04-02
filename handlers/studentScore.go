@@ -6,10 +6,11 @@ import (
 	"kma_score_api/models"
 	"kma_score_api/utils"
 	"math"
+	"strings"
 )
 
 func GetScoresByStudentCode(c *fiber.Ctx) error {
-	studentCode := c.Params("id")
+	studentCode := strings.ToUpper(c.Params("id"))
 
 	if studentCode != "" {
 		var scores []models.StudentScore
@@ -19,11 +20,10 @@ func GetScoresByStudentCode(c *fiber.Ctx) error {
 	}
 
 	return c.Status(400).JSON(utils.ApiResponse(400, "Bad Request", fiber.Map{}))
-
 }
 
 func CalculateAvgScore(c *fiber.Ctx) error {
-	studentCode := c.Params("id")
+	studentCode := strings.ToUpper(c.Params("id"))
 
 	if studentCode != "" {
 		var scores []models.StudentScore
@@ -31,6 +31,7 @@ func CalculateAvgScore(c *fiber.Ctx) error {
 		database.DBConn.Model(&models.StudentScore{}).
 			Where(&models.StudentScore{StudentCode: studentCode}).
 			Where("subjectCode NOT LIKE ?", "ATQGTC%").
+			Where("NOT (DIEMCHU = \"\")").
 			Find(&scores)
 
 		var sumAvgScore = 0.0
@@ -66,11 +67,15 @@ func CalculateAvgScore(c *fiber.Ctx) error {
 }
 
 func AddScore(c *fiber.Ctx) error {
-	studentCode := c.Params("id")
+	studentCode := strings.ToUpper(c.Params("id"))
 
 	type addScorePayload struct {
-		SubjectCode   string `json:"subjectCode"`
-		AlphabetScore string `json:"alphabetScore"`
+		SubjectCode          string `json:"subjectCode"`
+		FirstComponentScore  string `json:"firstComponentScore"`
+		SecondComponentScore string `json:"secondComponentScore"`
+		ExamScore            string `json:"examScore"`
+		AvgScore             string `json:"avgScore"`
+		AlphabetScore        string `json:"alphabetScore"`
 	}
 
 	var payload addScorePayload
@@ -90,13 +95,29 @@ func AddScore(c *fiber.Ctx) error {
 
 	if studentCode != "" {
 		newScore := models.StudentScore{
-			StudentCode:   studentCode,
-			SubjectCode:   payload.SubjectCode,
-			AlphabetScore: payload.AlphabetScore,
+			StudentCode:          studentCode,
+			SubjectCode:          payload.SubjectCode,
+			FirstComponentScore:  payload.FirstComponentScore,
+			SecondComponentScore: payload.SecondComponentScore,
+			ExamScore:            payload.ExamScore,
+			AvgScore:             payload.AvgScore,
+			AlphabetScore:        payload.AlphabetScore,
 		}
-		database.DBConn.Model(&models.StudentScore{}).Create(&newScore)
-		return c.Status(200).JSON(utils.ApiResponse(200, "Added score!", fiber.Map{}))
+
+		if utils.IsValidScore(newScore) {
+			if newScore.AlphabetScore == "" {
+				var err error
+				newScore.AvgScore, err = utils.CalcSubjectAvgScore(newScore)
+				newScore.AlphabetScore = utils.ConvertDecimalScoreToAlphabetScore(newScore.AvgScore)
+				if err != nil {
+					return c.Status(400).JSON(utils.ApiResponse(400, "Can't parse score", fiber.Map{}))
+				}
+			}
+
+			database.DBConn.Model(&models.StudentScore{}).Create(&newScore)
+			return c.Status(200).JSON(utils.ApiResponse(200, "Added score!", fiber.Map{}))
+		}
 	}
 
-	return c.Status(400).JSON(utils.ApiResponse(400, "Bad Request", fiber.Map{}))
+	return c.Status(400).JSON(utils.ApiResponse(400, "Your score is not valid", fiber.Map{}))
 }
