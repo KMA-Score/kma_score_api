@@ -26,7 +26,7 @@ func main() {
 
 	app.Get("statistics", handlers.GeneralScoresStatistics)
 
-	app.Get("statistics/student/:studentCode", handlers.StudentStatistics)
+	// app.Get("statistics/student/:studentCode", handlers.StudentStatistics)
 
 	app.Get("scores/:studentCode", handlers.GetScoresByStudentCode)
 
