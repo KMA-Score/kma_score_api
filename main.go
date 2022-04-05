@@ -24,13 +24,17 @@ func main() {
 		return c.Status(200).JSON(utils.ApiResponse(200, "KMA Score API is working very hard", fiber.Map{}))
 	})
 
-	app.Get("scores/:id", handlers.GetScoresByStudentCode)
+	app.Get("statistics", handlers.GeneralScoresStatistics)
 
-	app.Get("avg-score/:id", handlers.CalculateAvgScore)
+	app.Get("statistics/student/:studentCode", handlers.StudentStatistics)
+
+	app.Get("scores/:studentCode", handlers.GetScoresByStudentCode)
+
+	app.Get("avg-score/:studentCode", handlers.CalculateAvgScore)
 
 	app.Get("/subjects", handlers.AllSubject)
 
-	app.Post("/add-score/:id", handlers.AddScore)
+	app.Post("/add-score/:studentCode", handlers.AddScore)
 
 	app.All("*", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))
