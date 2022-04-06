@@ -99,8 +99,8 @@ func ConvertDecimalScoreToAlphabetScore(stringDecimalScore string) string {
 	return alphabetScore
 }
 
-func IsPassedSubject(score models.StudentScore) bool {
-	if score.AlphabetScore == "" || score.AlphabetScore == "F" {
+func IsPassedSubject(alphabetScore string) bool {
+	if alphabetScore == "" || alphabetScore == "F" {
 		return false
 	}
 
