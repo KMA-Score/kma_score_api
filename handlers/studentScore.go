@@ -170,7 +170,14 @@ func StudentStatistics(c *fiber.Ctx) error {
 		passedSubjects = append(passedSubjects, score)
 	}
 
-	var data = fiber.Map{
+	var data fiber.Map
+
+	if len(result) == 0 {
+		data = fiber.Map{}
+		return c.Status(404).JSON(utils.ApiResponse(404, "Student is not exist", data))
+	}
+
+	data = fiber.Map{
 		"result":         result,
 		"failedSubjects": failedSubjects,
 		"passedSubjects": passedSubjects,
@@ -208,7 +215,14 @@ func SubjectStatistics(c *fiber.Ctx) error {
 		passedStudents = passedStudents + 1
 	}
 
-	var data = fiber.Map{
+	var data fiber.Map
+
+	if len(result) == 0 {
+		data = fiber.Map{}
+		return c.Status(404).JSON(utils.ApiResponse(404, "Subject is not exist", data))
+	}
+
+	data = fiber.Map{
 		"failedSubjects": failedStudents,
 		"passedSubjects": passedStudents,
 	}
