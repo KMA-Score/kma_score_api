@@ -14,10 +14,20 @@ func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 	database.Connect()
 	app := fiber.New(fiber.Config{})
+
+	// create logs directory
+	err = utils.CreateDirIfNotExist("./logs")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// middlewares
+	app.Use(utils.LogToFile)
+	app.Use(utils.LogToTerminal)
 
 	// routes
 	app.Get("/", func(c *fiber.Ctx) error {

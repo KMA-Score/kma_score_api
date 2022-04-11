@@ -1,5 +1,6 @@
 .env
 .idea
 .vscode
+logs
 
 kma_score.db
