@@ -14,6 +14,7 @@ func main() {
 	err := godotenv.Load()
 	err = utils.CreateDirIfNotExist("./logs")
 	LogToFile, LogToTerminal, err := utils.Logger()
+	Cors := utils.Cors()
 
 	if err != nil {
 		log.Fatal(err)
@@ -25,6 +26,7 @@ func main() {
 	// middlewares
 	app.Use(LogToFile)
 	app.Use(LogToTerminal)
+	app.Use(Cors)
 
 	// routes
 	app.Get("/", func(c *fiber.Ctx) error {
