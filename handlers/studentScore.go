@@ -16,6 +16,10 @@ func GetScoresByStudentCode(c *fiber.Ctx) error {
 		var scores []models.StudentScore
 		database.DBConn.Model(&models.StudentScore{}).Where(&models.StudentScore{StudentCode: studentCode}).Find(&scores)
 
+		if len(scores) == 0 {
+			return c.Status(404).JSON(utils.ApiResponse(404, "Not Found", fiber.Map{}))
+		}
+
 		return c.Status(200).JSON(utils.ApiResponse(200, "OK", scores))
 	}
 
@@ -33,6 +37,10 @@ func CalculateAvgScore(c *fiber.Ctx) error {
 			Where("subjectCode NOT LIKE ?", "ATQGTC%").
 			Where("NOT (DIEMCHU = \"\")").
 			Find(&scores)
+
+		if len(scores) == 0 {
+			return c.Status(404).JSON(utils.ApiResponse(404, "Not Found", fiber.Map{}))
+		}
 
 		var sumAvgScore = 0.0
 		var totalNumberOfCredit = 0
