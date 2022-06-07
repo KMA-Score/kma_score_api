@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
-	"os"
+	"path/filepath"
 )
 
 var (
@@ -12,7 +12,13 @@ var (
 )
 
 func Connect() {
-	db, err := gorm.Open(sqlite.Open(os.Getenv("DB_PATH")), &gorm.Config{})
+	dir, err := filepath.Abs("./data/kma_score.db")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := gorm.Open(sqlite.Open(dir), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)

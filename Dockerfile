@@ -1,7 +1,6 @@
 FROM golang:1.18.3-alpine
 
 ENV PORT=8080
-ENV DB_PATH=./kma_score.db
 
 WORKDIR /app
 
