@@ -1,5 +1,7 @@
 FROM golang:1.18.3-alpine
 
+LABEL maintainer="Dang Hoang Phuc <13364457+phuchptty@users.noreply.github.com>"
+
 ENV PORT=8080
 
 WORKDIR /app
