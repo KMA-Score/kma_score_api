@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Go Build Action
+      # You may pin to the exact commit or the version.
+      # uses: calxus/go-build-action@2b7cbe0d647f19cb4aee1fe77699cdc8a5cc09d4
+      uses: calxus/go-build-action@latest
+      with:
+        # The namespace the image is to be tagged as
+        IMAGE_NAMESPACE: 'kma-score-api'
+        # The name the image is to be tagged as
+        IMAGE_NAME: 'kma-score-api'
+        # The version the image is to be tagged as
+        IMAGE_VERSION: 'latest'
+        # The username used to authenticate to dockerhub
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        # The password used to athenticate to dockerhub
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
