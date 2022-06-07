@@ -19,7 +19,7 @@ jobs:
       uses: calxus/go-build-action@latest
       with:
         # The namespace the image is to be tagged as
-        IMAGE_NAMESPACE: ${{ secrets.DOCKER_USERNAME }}
+        IMAGE_NAMESPACE: 'arahiko'
         # The name the image is to be tagged as
         IMAGE_NAME: 'kma-score-api'
         # The version the image is to be tagged as
