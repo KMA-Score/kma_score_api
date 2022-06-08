@@ -5,40 +5,62 @@ KMA Score API written in Go
 
 
 ## Installation
+There are two ways you can use: 
+### 1. Compile and run by yourself
 
-- [Install Golang (1.18.3 or above)](https://go.dev/doc/install)
+1. [Install Golang (1.18.3 or above)](https://go.dev/doc/install)
 
-- Copy a dump SQLite3 Score Database to folder. Leave it near main.go
+2. Copy a dump SQLite3 Score Database to folder. Leave it near main.go
 
     *Tip: You can dump it by using [KMA Score Extractor](https://github.com/Haven-Code/KMA-Score-Extractor)*
 
-- Create/Edit enviroment file
+
+3. Create/Edit enviroment file
 
 ```env
 # .env
 
 PORT = 8000 # Change port here
-DB_PATH = ./kma_score.db # Path to DB file
+DB_PATH = ./kma_score.db # Path to DB file, default: ./data/kma_score.db
 ```
 
-- Run locally
+4. Run locally
 
-```bash
-  go run main.go
+```shell
+go run main.go
 ```
 
-- Build
+- Or you can build
 
-```bash
-  go build -o /kma-score-api
+```shell
+go build -o /kma-score-api
 ```
-    
+
+### 2. Using our [Docker image](https://hub.docker.com/repository/docker/arahiko/kma-score-api)
+1. Pull Docker image
+```shell
+docker push arahiko/kma-score-api:latest
+```
+2. Run
+```shell
+docker run -p 8080:8080 --name kma_score -v path/to/your/db_folder:/app/data -d arahiko/kma-score-api
+```
+
+3. Check if the container is running
+```shell
+docker ps
+```
+- After the first time, you can run the container with:
+```shell
+docker run kma_score
+```
+
 ## API Reference
 
 #### Get all scores by student code
 
 ```http
-  GET /scores/{studentCode}
+GET /scores/{studentCode}
 ```
 
 | Parameter | Type     | Description                |
@@ -48,13 +70,13 @@ DB_PATH = ./kma_score.db # Path to DB file
 #### Get all subject
 
 ```http
-  GET /subjects
+GET /subjects
 ```
 
 #### Get Avg score
 
 ```http
-  GET /avg-score/{studentCode}
+GET /avg-score/{studentCode}
 ```
 
 | Parameter | Type     | Description                |
@@ -64,7 +86,7 @@ DB_PATH = ./kma_score.db # Path to DB file
 #### Edit score in database
 
 ```http
-  POST /add-score/{studentCode}
+POST /add-score/{studentCode}
 ```
 
 | Parameter | Type     | Description                |
