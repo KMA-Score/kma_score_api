@@ -36,7 +36,7 @@ go run main.go
 go build -o /kma-score-api
 ```
 
-### 2. Using our [Docker image](https://hub.docker.com/repository/docker/arahiko/kma-score-api)
+### 2. Using our [Docker image](https://hub.docker.com/r/arahiko/kma-score-api)
 1. Pull Docker image
 ```shell
 docker push arahiko/kma-score-api:latest
