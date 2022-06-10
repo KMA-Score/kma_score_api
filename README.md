@@ -21,7 +21,6 @@ There are two ways you can use:
 # .env
 
 PORT = 8000 # Change port here
-DB_PATH = ./kma_score.db # Path to DB file, default: ./data/kma_score.db
 ```
 
 4. Run locally
@@ -44,15 +43,6 @@ docker push arahiko/kma-score-api:latest
 2. Run
 ```shell
 docker run -p 8080:8080 --name kma_score -v path/to/your/db_folder:/app/data -d arahiko/kma-score-api
-```
-
-3. Check if the container is running
-```shell
-docker ps
-```
-- After the first time, you can run the container with:
-```shell
-docker run kma_score
 ```
 
 ## API Reference
