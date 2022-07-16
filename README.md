@@ -50,12 +50,12 @@ docker run -p 8080:8080 --name kma_score -v path/to/your/db_folder:/app/data -d 
 #### Get all scores by student code
 
 ```http
-GET /scores/{studentCode}
+GET /scores/{StudentId}
 ```
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `studentCode` | `string` | **Required** |
+| `StudentId` | `string` | **Required** |
 
 #### Get all subject
 
@@ -66,20 +66,20 @@ GET /subjects
 #### Get Avg score
 
 ```http
-GET /avg-score/{studentCode}
+GET /avg-score/{StudentId}
 ```
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `studentCode` | `string` | **Required** |
+| `StudentId` | `string` | **Required** |
 
 #### Edit score in database
 
 ```http
-POST /add-score/{studentCode}
+POST /add-score/{StudentId}
 ```
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `studentCode` | `string` | **Required** |
+| `StudentId` | `string` | **Required** |
 

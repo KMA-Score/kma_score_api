@@ -35,17 +35,13 @@ func main() {
 
 	app.Get("statistics", handlers.GeneralScoresStatistics)
 
-	app.Get("statistics/student/:studentCode", handlers.StudentStatistics)
+	app.Get("student/:StudentId", handlers.StudentStatistics)
 
-	app.Get("statistics/subject/:subjectCode", handlers.SubjectStatistics)
-
-	app.Get("scores/:studentCode", handlers.GetScoresByStudentCode)
-
-	app.Get("avg-score/:studentCode", handlers.CalculateAvgScore)
+	app.Get("subject/:SubjectId", handlers.SubjectStatistics)
 
 	app.Get("/subjects", handlers.AllSubject)
 
-	app.Post("/add-score/:studentCode", handlers.AddScore)
+	app.Post("/add-score/:StudentId", handlers.AddScore)
 
 	app.All("*", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))

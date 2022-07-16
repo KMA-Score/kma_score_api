@@ -31,9 +31,9 @@ func AlphabetScoreToTetraScore(alphabetScore string) float64 {
 	}
 }
 
-func GetSubjectIndex(subjects []models.SubjectInfo, element models.StudentScore) int {
+func GetSubjectIndex(subjects []models.Subject, element models.Score) int {
 	for i, e := range subjects {
-		if e.SubjectCode == element.SubjectCode {
+		if e.ID == element.SubjectId {
 			return i
 		}
 	}
@@ -41,7 +41,7 @@ func GetSubjectIndex(subjects []models.SubjectInfo, element models.StudentScore)
 	return -1
 }
 
-func IsValidScore(score models.StudentScore) bool {
+func IsValidScore(score models.Score) bool {
 	firstComponentScore, err := strconv.ParseFloat(score.FirstComponentScore, 64)
 	secondComponentScore, err := strconv.ParseFloat(score.SecondComponentScore, 64)
 	examScore, err := strconv.ParseFloat(score.ExamScore, 64)
@@ -62,7 +62,7 @@ func IsValidScore(score models.StudentScore) bool {
 	return true
 }
 
-func CalcSubjectAvgScore(score models.StudentScore) (string, error) {
+func CalcSubjectAvgScore(score models.Score) (string, error) {
 	firstComponentScore, err := strconv.ParseFloat(score.FirstComponentScore, 64)
 	secondComponentScore, err := strconv.ParseFloat(score.SecondComponentScore, 64)
 	examScore, err := strconv.ParseFloat(score.ExamScore, 64)
