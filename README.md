@@ -38,11 +38,11 @@ go build -o /kma-score-api
 ### 2. Using our [Docker image](https://hub.docker.com/r/arahiko/kma-score-api)
 1. Pull Docker image
 ```shell
-docker push arahiko/kma-score-api:latest
+docker pull arahiko/kma-score-api:latest
 ```
 2. Run
 ```shell
-docker run -p 8080:8080 --name kma_score -e DB_PATH <username>:<password>@tcp(<host>:<port>)/<dbname>
+docker run -p 8080:8080 --name kma_score -e DB_PATH <username>:<password>@tcp(<host>:<port>)/<dbname> arahiko/kma-score-api
 ```
 
 ## API Reference
