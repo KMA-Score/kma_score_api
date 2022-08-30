@@ -42,7 +42,7 @@ docker push arahiko/kma-score-api:latest
 ```
 2. Run
 ```shell
-docker run -p 8080:8080 --name kma_score -v path/to/your/db_folder:/app/data -d arahiko/kma-score-api
+docker run -p 8080:8080 --name kma_score -e DB_PATH <username>:<password>@tcp(<host>:<port>)/<dbname>
 ```
 
 ## API Reference

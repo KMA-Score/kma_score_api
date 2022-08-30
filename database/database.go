@@ -1,11 +1,10 @@
 package database
 
 import (
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"path/filepath"
 )
 
 var (
@@ -13,18 +12,13 @@ var (
 )
 
 func Connect() {
-	var dir string
-	var err error
+	var dsn string
 
-	if dir = os.Getenv("DB_PATH"); dir == "" {
-		dir, err = filepath.Abs("./data/kma_score.db")
-
-		if err != nil {
-			log.Fatal(err)
-		}
+	if dsn = os.Getenv("DB_PATH"); dsn == "" {
+		log.Fatal("DB_PATH is not set")
 	}
 
-	db, err := gorm.Open(sqlite.Open(dir), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)
