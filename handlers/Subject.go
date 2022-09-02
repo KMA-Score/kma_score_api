@@ -18,7 +18,7 @@ func AllSubject(c *fiber.Ctx) error {
 	var subjects []Result
 	database.DBConn.Model(&models.Subject{}).Find(&subjects)
 
-	return c.Status(200).JSON(subjects)
+	return c.Status(200).JSON(utils.ApiResponse(200, "OK", subjects))
 }
 
 func SubjectStatistics(c *fiber.Ctx) error {
