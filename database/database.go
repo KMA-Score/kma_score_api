@@ -12,9 +12,9 @@ var (
 )
 
 func Connect() {
-	var dsn string
+	dsn := os.Getenv("DB_USERNAME") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + ")/" + os.Getenv("DB_NAME")
 
-	if dsn = os.Getenv("DB_PATH"); dsn == "" {
+	if dsn == "" {
 		log.Fatal("DB_PATH is not set")
 	}
 
