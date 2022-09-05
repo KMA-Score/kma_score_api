@@ -7,7 +7,6 @@ import (
 	"kma_score_api/handlers"
 	"kma_score_api/utils"
 	"log"
-	"os"
 )
 
 func main() {
