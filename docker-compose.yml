@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  kma_score:
+    container_name: kma_score
+    image: arahiko/kma-score-api:latest
+    env_file:
+      - ./.env
+    ports:
+      - ${PORT}:8080
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}

@@ -47,7 +47,7 @@ func main() {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))
 	})
 
-	err = app.Listen(":" + os.Getenv("PORT"))
+	err = app.Listen(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
