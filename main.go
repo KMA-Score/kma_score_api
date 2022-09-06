@@ -7,6 +7,8 @@ import (
 	"kma_score_api/handlers"
 	"kma_score_api/utils"
 	"log"
+	"os"
+	"strconv"
 )
 
 func main() {
@@ -46,7 +48,14 @@ func main() {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))
 	})
 
-	err = app.Listen(":8080")
+	var enableSsl, _ = strconv.ParseBool(os.Getenv("ENABLE_SSL"))
+
+	if enableSsl {
+		err = app.ListenTLS(":8080", "./cert/public.pem", "./cert/private.pem")
+	} else {
+		err = app.Listen(":8080")
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}

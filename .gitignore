@@ -2,5 +2,6 @@
 .idea
 .vscode
 logs
+cert
 
 kma_score.db

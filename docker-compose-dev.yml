@@ -3,7 +3,9 @@ version: '3.8'
 services:
   kma_score:
     container_name: kma_score
-    image: arahiko/kma-score-api:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
     env_file:
       - ./.env
     ports:
