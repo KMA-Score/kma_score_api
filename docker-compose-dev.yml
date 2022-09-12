@@ -10,12 +10,12 @@ services:
       - ./.env
     ports:
       - ${PORT}:8080
-    volumes:
-      - ./cert:/app/cert
     environment:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - ENABLE_SSL=${ENABLE_SSL}
+      - MEILISEARCH_HOST=${MEILISEARCH_HOST}
+      - MEILISEARCH_PORT=${MEILISEARCH_PORT}
+      - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}

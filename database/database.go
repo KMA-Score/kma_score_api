@@ -15,7 +15,7 @@ func Connect() {
 	dsn := os.Getenv("DB_USERNAME") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + ")/" + os.Getenv("DB_NAME")
 
 	if dsn == "" {
-		log.Fatal("DB_PATH is not set")
+		log.Fatal("Database env variables were not set")
 	}
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})

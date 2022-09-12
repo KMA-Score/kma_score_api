@@ -7,8 +7,6 @@ import (
 	"kma_score_api/handlers"
 	"kma_score_api/utils"
 	"log"
-	"os"
-	"strconv"
 )
 
 func main() {
@@ -22,6 +20,7 @@ func main() {
 	}
 
 	database.Connect()
+	utils.MeilisearchInit()
 	app := fiber.New(fiber.Config{})
 
 	// middlewares
@@ -44,17 +43,13 @@ func main() {
 
 	app.Post("/add-score/:StudentId", handlers.AddScore)
 
+	app.Get("/search/*", handlers.Search)
+
 	app.All("*", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))
 	})
 
-	var enableSsl, _ = strconv.ParseBool(os.Getenv("ENABLE_SSL"))
-
-	if enableSsl {
-		err = app.ListenTLS(":8080", "./cert/public.pem", "./cert/private.pem")
-	} else {
-		err = app.Listen(":8080")
-	}
+	err = app.Listen(":8080")
 
 	if err != nil {
 		log.Fatal(err)
