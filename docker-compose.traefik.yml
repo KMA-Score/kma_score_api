@@ -6,8 +6,6 @@ services:
     image: arahiko/kma-score-api:latest
     env_file:
       - ./.env
-    ports:
-      - ${PORT}:8080
     environment:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -34,8 +32,6 @@ services:
   meilisearch:
     container_name: meilisearch
     image: getmeili/meilisearch:latest
-    ports:
-      - ${MEILISEARCH_PORT}:7700
     environment:
       - http_proxy
       - https_proxy
