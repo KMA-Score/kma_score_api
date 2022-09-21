@@ -5,6 +5,7 @@ import (
 	"kma_score_api/config"
 	"kma_score_api/database"
 	"kma_score_api/models"
+	"log"
 	"os"
 )
 
@@ -25,6 +26,6 @@ func MeilisearchInit() {
 	_, err = MeilisearchClient.Index("students").UpdateDisplayedAttributes(&config.StudentDisplayedAttributes)
 
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 }
