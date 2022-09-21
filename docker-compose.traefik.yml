@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  kma_score:
+    container_name: kma_score
+    image: arahiko/kma-score-api:latest
+    env_file:
+      - ./.env
+    ports:
+      - ${PORT}:8080
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - MEILISEARCH_HOST=${MEILISEARCH_HOST}
+      - MEILISEARCH_PORT=${MEILISEARCH_PORT}
+      - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kma.rule=Host(`${HOST_DOMAIN}`)"
+      - "traefik.http.routers.kma.entrypoints=web"
+      - "traefik.http.routers.kma_https.rule=Host(`${HOST_DOMAIN}`)"
+      - "traefik.http.routers.kma_https.tls=true"
+      - "traefik.http.routers.kma_https.entrypoints=websecure"
+      - "traefik.http.routers.kma_https.tls.certResolver=le"
+      - "traefik.port=8080"
+    links:
+        - meilisearch
+    networks:
+      - proxy
+
+  meilisearch:
+    container_name: meilisearch
+    image: getmeili/meilisearch:latest
+    ports:
+      - ${MEILISEARCH_PORT}:7700
+    environment:
+      - http_proxy
+      - https_proxy
+      - MEILI_MASTER_KEY=${MEILISEARCH_API_KEY}
+      - MEILI_NO_ANALYTICS=${MEILISEARCH_NO_ANALYTICS:-true}
+      - MEILI_ENV=${MEILISEARCH_ENV:-production}
+      - MEILI_DB_PATH=${MEILISEARCH_DB_PATH:-/data.ms}
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: "traefik_proxy"
