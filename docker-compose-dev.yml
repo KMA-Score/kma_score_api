@@ -19,3 +19,18 @@ services:
       - MEILISEARCH_HOST=${MEILISEARCH_HOST}
       - MEILISEARCH_PORT=${MEILISEARCH_PORT}
       - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
+    links:
+      - meilisearch
+
+  meilisearch:
+    container_name: meilisearch
+    image: getmeili/meilisearch:latest
+    ports:
+      - ${MEILISEARCH_PORT}:7700
+    environment:
+      - http_proxy
+      - https_proxy
+      - MEILI_MASTER_KEY=${MEILISEARCH_API_KEY}
+      - MEILI_NO_ANALYTICS=${MEILISEARCH_NO_ANALYTICS:-true}
+      - MEILI_ENV=${MEILISEARCH_ENV:-production}
+      - MEILI_DB_PATH=${MEILISEARCH_DB_PATH:-/data.ms}
