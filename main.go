@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"kma_score_api/database"
 	"kma_score_api/handlers"
+	"kma_score_api/middlewares"
 	"kma_score_api/utils"
 	"log"
 )
@@ -12,8 +13,9 @@ import (
 func main() {
 	err := godotenv.Load()
 	err = utils.CreateDirIfNotExist("./logs")
-	LogToFile, LogToTerminal, err := utils.Logger()
-	Cors := utils.Cors()
+	LogToFile, LogToTerminal, err := middlewares.Logger()
+	Cors := middlewares.Cors()
+	Limiter := middlewares.Limiter()
 
 	if err != nil {
 		log.Fatal(err)
@@ -27,6 +29,7 @@ func main() {
 	app.Use(LogToFile)
 	app.Use(LogToTerminal)
 	app.Use(Cors)
+	app.Use(Limiter)
 
 	// routes
 	app.Get("/", func(c *fiber.Ctx) error {
