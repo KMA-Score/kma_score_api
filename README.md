@@ -5,7 +5,7 @@ KMA Score API written in Go
 
 
 ## Installation
-There are two ways you can use: 
+There are three ways you can use: 
 ### 1. Compile and run by yourself
 
 1. [Install Golang (1.18.3 or above)](https://go.dev/doc/install)
@@ -13,7 +13,8 @@ There are two ways you can use:
 2. [Install MariaDB (10.6.4 or above)](https://mariadb.org/download/)
 
     * You can [install MySQL](https://dev.mysql.com/downloads/mysql/) instead of MariaDB
-    *Tip: You can dump it by using [KMA Score Extractor](https://github.com/Haven-Code/KMA-Score-Extractor)*
+3. Insert your data into database
+    * Tip: You can dump it by using [KMA Score Extractor](https://github.com/Haven-Code/KMA-Score-Extractor)
 
 
 3. Create/Edit enviroment file
@@ -37,11 +38,13 @@ go build -o /kma-score-api
 ```
 
 ### 2. Using our [Docker image](https://hub.docker.com/r/arahiko/kma-score-api)
-1. Pull Docker image
+1. Pull and run Meilisearch docker image
+   * Read [Meilisearch document](https://docs.meilisearch.com/learn/getting_started/quick_start.html#setup-and-installation) for more information.
+2. Pull Docker image
 ```shell
 docker pull arahiko/kma-score-api:latest
 ```
-2. Run
+3. Run
 ```shell
 docker run -p 8080:8080 --name kma_score \
 -e PORT=8080 DB_USERNAME=username DB_PASSWORD=password \
@@ -50,9 +53,13 @@ MEILISEARCH_HOST=your-host MEILISEARCH_PORT=7700 \
 MEILISEARCH_API_KEY=meilisearch_api_key \
 arahiko/kma-score-api:lastest
 ```
-* Or you can use this env file when run docker container
+* Or you can use your env file when run docker container
 ```shell
 docker run -p 8080:8080 --name kma_score --env-file path/to/.env arahiko/kma-score-api:latest 
+```
+### 3. Using our docker-compose file
+```shell
+docker-compose -f docker-compose.yml up -d
 ```
 
 ## API Reference
