@@ -89,7 +89,7 @@ func StudentStatistics(c *fiber.Ctx) error {
 	id := strings.ToUpper(c.Params("StudentId"))
 	var result models.Student
 
-	database.DBConn.Where("Id = ?", id).Preload("Scores").Find(&result)
+	database.DBConn.Where("Id = ?", id).Preload("Scores").Preload("Scores.Subject").Find(&result)
 
 	failedSubjects := 0
 	passedSubjects := 0
