@@ -8,7 +8,7 @@ import (
 
 func Limiter() fiber.Handler {
 	return limiter.New(limiter.Config{
-		Max:        30,
+		Max:        100,
 		Expiration: 1 * time.Minute,
 	})
 }
