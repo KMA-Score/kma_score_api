@@ -15,15 +15,6 @@ services:
       - MEILISEARCH_HOST=${MEILISEARCH_HOST}
       - MEILISEARCH_PORT=${MEILISEARCH_PORT}
       - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.kma.rule=Host(`${HOST_DOMAIN}`)"
-      - "traefik.http.routers.kma.entrypoints=web"
-      - "traefik.http.routers.kma_https.rule=Host(`${HOST_DOMAIN}`)"
-      - "traefik.http.routers.kma_https.tls=true"
-      - "traefik.http.routers.kma_https.entrypoints=websecure"
-      - "traefik.http.routers.kma_https.tls.certResolver=le"
-      - "traefik.port=8080"
     links:
         - meilisearch
     networks:
@@ -45,4 +36,4 @@ services:
 networks:
   proxy:
     external: true
-    name: "traefik_proxy"
+    name: "cloudflared_proxy"
