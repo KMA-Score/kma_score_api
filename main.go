@@ -23,6 +23,9 @@ func main() {
 
 	database.Connect()
 	utils.MeilisearchInit()
+
+	utils.SetUpCron()
+
 	app := fiber.New(fiber.Config{})
 
 	// middlewares
