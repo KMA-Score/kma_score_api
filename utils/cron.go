@@ -1,28 +1,51 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/go-co-op/gocron"
+	"kma_score_api/database"
 	"kma_score_api/middlewares"
+	"kma_score_api/models"
+	"log"
 	"time"
 )
 
-func SetUpCron() {
-	_, _, err := middlewares.Logger()
-	//Implement Cron
+func _doCron() {
+	log.Printf("Executing cron update search at %v", time.Now())
 
+	// Copy from arahiko-ayami
+	var students []models.Student
+	database.DBConn.Model(&models.Student{}).Find(&students)
+
+	_, _, err := middlewares.Logger()
+
+	_, err = MeilisearchClient.Index("students").UpdateDocuments(students)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Update meliSearch done!")
+}
+
+func InitCron() {
+	_, _, err := middlewares.Logger()
+
+	// Should be UTC but I like UTC+7
 	location, err := time.LoadLocation("Asia/Ho_Chi_Minh")
 
 	s := gocron.NewScheduler(location)
 
-	_, err = s.Every(5).Second().Do(func() {
-		fmt.Println("INTERVAL 5S")
+	// Main function
+	// Cronjob every 15 minutes
+	_, err = s.Every(15).Minute().Do(func() {
+		_doCron()
 	})
 
 	if err != nil {
-		fmt.Print("ERROR")
+		log.Fatal(err)
 		return
 	}
 
+	// uhh start async?
 	s.StartAsync()
 }
