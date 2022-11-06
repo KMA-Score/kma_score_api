@@ -23,6 +23,10 @@ func main() {
 
 	database.Connect()
 	utils.MeilisearchInit()
+
+	// IMPORTANT: cron must be init before http startup and after database + meliSearch init
+	utils.InitCron()
+
 	app := fiber.New(fiber.Config{})
 
 	// middlewares
