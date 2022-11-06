@@ -10,7 +10,7 @@ import (
 )
 
 func _doCron() {
-	log.Printf("Executing cron update search at %v", time.Now())
+	log.Printf("Executing cron update meilisearch at %v", time.Now())
 
 	// Copy from arahiko-ayami
 	var students []models.Student
@@ -24,7 +24,7 @@ func _doCron() {
 		log.Fatal(err)
 	}
 
-	log.Println("Update meliSearch done!")
+	log.Println("Update meilisearch done!")
 }
 
 func InitCron() {
