@@ -35,7 +35,6 @@ jobs:
             type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
-          
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -49,3 +48,21 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kma-score-api:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kma-score-api:buildcache,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            cd kma_score_api
+            docker compose down
+            docker compose rm -f
+            docker compose pull
+            docker compose -f docker-compose.cf.yml up -d
