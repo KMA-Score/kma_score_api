@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"kma_score_api/cron"
 	"kma_score_api/database"
 	"kma_score_api/handlers"
 	"kma_score_api/middlewares"
@@ -25,7 +26,7 @@ func main() {
 	utils.MeilisearchInit()
 
 	// IMPORTANT: cron must be init before http startup and after database + meiliSearch init
-	utils.InitCron()
+	cron.InitCron()
 
 	app := fiber.New(fiber.Config{})
 
