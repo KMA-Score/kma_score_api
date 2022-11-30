@@ -53,6 +53,9 @@ func main() {
 
 	app.Get("/search/*", handlers.Search)
 
+	// SSO Auth
+	app.Post("/auth/verifyToken", handlers.VerifyToken)
+
 	app.All("*", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))
 	})
