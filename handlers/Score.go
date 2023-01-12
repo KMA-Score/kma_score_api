@@ -114,10 +114,12 @@ func StudentStatistics(c *fiber.Ctx) error {
 	database.DBConn.Model(&models.Subject{}).Where("(Id) IN ?", SubjectIds).Find(&subjects)
 
 	for _, score := range result.Scores {
-		index := utils.GetSubjectIndex(subjects, score)
-		if index >= 0 {
-			totalNumberOfCredit = totalNumberOfCredit + subjects[index].NumberOfCredits
-			sumAvgScore = sumAvgScore + utils.AlphabetScoreToTetraScore(score.AlphabetScore)*float64(subjects[index].NumberOfCredits)
+		if utils.ShouldCalculateAverageScore(score) {
+			index := utils.GetSubjectIndex(subjects, score)
+			if index >= 0 {
+				totalNumberOfCredit = totalNumberOfCredit + subjects[index].NumberOfCredits
+				sumAvgScore = sumAvgScore + utils.AlphabetScoreToTetraScore(score.AlphabetScore)*float64(subjects[index].NumberOfCredits)
+			}
 		}
 	}
 

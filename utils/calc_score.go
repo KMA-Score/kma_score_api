@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"kma_score_api/models"
+	"regexp"
 	"strconv"
 )
 
@@ -101,6 +102,16 @@ func ConvertDecimalScoreToAlphabetScore(stringDecimalScore string) string {
 
 func IsPassedSubject(alphabetScore string) bool {
 	if alphabetScore == "" || alphabetScore == "F" {
+		return false
+	}
+
+	return true
+}
+
+func ShouldCalculateAverageScore(score models.Score) bool {
+	matched, _ := regexp.Match(`ATGDTC\d+`, []byte(score.SubjectId))
+
+	if !matched {
 		return false
 	}
 
