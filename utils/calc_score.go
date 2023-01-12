@@ -109,9 +109,9 @@ func IsPassedSubject(alphabetScore string) bool {
 }
 
 func ShouldCalculateAverageScore(score models.Score) bool {
-	matched, _ := regexp.Match(`ATGDTC\d+`, []byte(score.SubjectId))
+	matched, _ := regexp.Match(`ATQGTC\d+`, []byte(score.SubjectId))
 
-	if !matched {
+	if matched {
 		return false
 	}
 
