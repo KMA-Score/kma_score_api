@@ -47,9 +47,6 @@ func AuthToken(c *fiber.Ctx) error {
 		return c.Status(400).JSON(utils.ApiResponse(400, "Token is invalid", nil))
 	}
 
-	// TODO: Figure out how to Parse and Validate in one step. Make it faster
-	//rsaPrivate, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(os.Getenv("JWT_CLIENT_PUBLIC_KEY")))
-
 	claims := jwt.MapClaims{}
 
 	_, _, err = new(jwt.Parser).ParseUnverified(p.Token, claims)
