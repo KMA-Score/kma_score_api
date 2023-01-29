@@ -63,6 +63,5 @@ jobs:
           script: |
             cd kma_score_api
             docker compose down
-            docker compose rm -f
             docker compose pull
             docker compose -f docker-compose.cf.yml up -d

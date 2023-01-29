@@ -21,8 +21,7 @@ func MeilisearchInit() {
 	var students []models.Student
 	database.DBConn.Model(&models.Student{}).Find(&students)
 
-	_, err := MeilisearchClient.Index("students").AddDocuments(students)
-	_, err = MeilisearchClient.Index("students").UpdateRankingRules(&config.StudentRankingRules)
+	_, err := MeilisearchClient.Index("students").UpdateRankingRules(&config.StudentRankingRules)
 	_, err = MeilisearchClient.Index("students").UpdateDisplayedAttributes(&config.StudentDisplayedAttributes)
 
 	if err != nil {
