@@ -33,6 +33,19 @@ services:
     networks:
       - proxy
 
+  mariadb:
+    container_name: mariadb
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      - proxy
+
 networks:
   proxy:
     external: true
