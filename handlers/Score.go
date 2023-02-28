@@ -124,7 +124,7 @@ func StudentStatistics(c *fiber.Ctx) error {
 	}
 
 	avgScore := sumAvgScore / float64(totalNumberOfCredit)
-	avgScore = math.Floor(avgScore*100) / 100
+	avgScore = math.Round(avgScore*100) / 100
 
 	var data fiber.Map
 
