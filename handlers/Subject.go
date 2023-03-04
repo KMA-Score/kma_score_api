@@ -31,7 +31,7 @@ func SubjectStatistics(c *fiber.Ctx) error {
 	var passedStudents = 0
 
 	for _, score := range result {
-		if !utils.IsPassedSubject(score.AlphabetScore) {
+		if !utils.IsPassedSubject(score) {
 			failedStudents = failedStudents + 1
 		}
 
