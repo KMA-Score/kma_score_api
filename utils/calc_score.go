@@ -100,8 +100,11 @@ func ConvertDecimalScoreToAlphabetScore(stringDecimalScore string) string {
 	return alphabetScore
 }
 
-func IsPassedSubject(alphabetScore string) bool {
-	if alphabetScore == "" || alphabetScore == "F" {
+func IsPassedSubject(score models.Score) bool {
+	// Parse score to float
+	examScore, err := strconv.ParseFloat(score.ExamScore, 64)
+
+	if err != nil || score.AlphabetScore == "" || score.AlphabetScore == "F" || examScore < 4 {
 		return false
 	}
 
