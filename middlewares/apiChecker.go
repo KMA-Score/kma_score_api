@@ -1,8 +1,14 @@
 package middlewares
 
 import (
+	"encoding/base64"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm/utils"
+	"kma_score_api/database"
+	"kma_score_api/models"
+	"kma_score_api/utils/aes"
+	"log"
 )
 
 // Config defines the config for middleware.
@@ -37,9 +43,8 @@ var ConfigDefault = Config{
 }
 
 const (
-	apiKeyField       = "X-KMA-API-KEY"
-	apiSecretField    = "X-KMA-API-SECRET"
-	apiTimestampField = "X-KMA-API-TIMESTAMP"
+	apiKeyField        = "X-KMA-API-KEY"
+	apiSecretHashField = "X-KMA-API-SECRET-HASH"
 )
 
 // New creates a new middleware handler
@@ -76,9 +81,34 @@ func New(config ...Config) fiber.Handler {
 			return c.Next()
 		}
 
-		//clientApiKey := c.Get(apiKeyField)
+		clientApiKey := c.Get(apiKeyField)
+		clientSecretHash := c.Get(apiSecretHashField)
+
+		if clientApiKey == "" || clientSecretHash == "" {
+			return fiber.ErrForbidden
+		}
+
+		var key models.ApiKey
+		result := database.DBConn.Model(&models.ApiKey{}).Where("`Key` = ?", clientApiKey).First(&key)
+
+		if result.RowsAffected == 0 {
+			log.Print(result.Error)
+			return fiber.ErrForbidden
+		}
+
+		var keyDecoded, err = base64.StdEncoding.DecodeString(key.Secret)
+
+		if err != nil {
+			log.Print(result.Error)
+			return fiber.ErrForbidden
+		}
+
+		var decoded string
+		decoded, err = aes.DecryptGCM(keyDecoded, clientSecretHash)
+
+		fmt.Println(decoded)
+
 		//clientApiSecret := c.Get(apiSecretField)
-		//clientApiTimestamp := c.Get(apiTimestampField)
 		//
 		//fmt.Println(reqHeaders)
 
@@ -88,7 +118,8 @@ func New(config ...Config) fiber.Handler {
 
 func ApiChecker() fiber.Handler {
 	return New(Config{
-		Enable:   true,
-		BackList: []string{},
+		Enable:           true,
+		BackList:         []string{},
+		ApiTimeDeviation: 60000,
 	})
 }
