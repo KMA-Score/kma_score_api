@@ -7,8 +7,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"encoding/base64"
+	"encoding/hex"
+	"fmt"
 	"io"
+	"strings"
 )
 
 func GenerateAESKey() ([]byte, error) {
@@ -40,40 +42,46 @@ func EncryptGCM(key []byte, message string) (string, error) {
 	// Encrypt the message using GCM mode
 	ciphertext := aesgcm.Seal(nil, nonce, []byte(message), nil)
 
-	// Concatenate the nonce and ciphertext
-	encrypted := append(nonce, ciphertext...)
+	//// Concatenate the nonce and ciphertext
+	//encrypted := append(nonce, ciphertext...)
+	//
+	//// Encode the encrypted message as a base64 string
+	//return base64.StdEncoding.EncodeToString(encrypted), nil
 
-	// Encode the encrypted message as a base64 string
-	return base64.StdEncoding.EncodeToString(encrypted), nil
+	return fmt.Sprintf("%x.%x.%x", ciphertext, nonce, aesgcm.Seal(nil, nonce, nil, nil)), nil
 }
 
-func DecryptGCM(key []byte, encrypted string) (string, error) {
+// PKCS5UnPadding  pads a certain blob of data with necessary data to be used in AES block cipher
+func PKCS5UnPadding(src []byte) []byte {
+	length := len(src)
+	unpadding := int(src[length-1])
+
+	return src[:(length - unpadding)]
+}
+
+func DecryptCBC(key []byte, encrypted string) ([]byte, error) {
+	parts := strings.Split(encrypted, ".")
+
+	ciphertext, err := hex.DecodeString(parts[0])
+	if err != nil {
+		return nil, err
+	}
+
+	iv, err := hex.DecodeString(parts[1])
+	if err != nil {
+		return nil, err
+	}
+
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// Decode the base64 string to get the encrypted message
-	encryptedBytes, err := base64.StdEncoding.DecodeString(encrypted)
-	if err != nil {
-		return "", err
-	}
+	// Decrypt the ciphertext
+	mode := cipher.NewCBCDecrypter(block, iv)
+	decryptedText := make([]byte, len(ciphertext))
+	mode.CryptBlocks(decryptedText, ciphertext)
+	decryptedText = PKCS5UnPadding(decryptedText)
 
-	// Split the nonce and ciphertext
-	nonce := encryptedBytes[:12]
-	ciphertext := encryptedBytes[12:]
-
-	// Create a new GCM block cipher
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return "", err
-	}
-
-	// Decrypt the ciphertext using GCM mode
-	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
-	if err != nil {
-		return "", err
-	}
-
-	return string(plaintext), nil
+	return decryptedText, nil
 }

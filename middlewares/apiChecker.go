@@ -2,13 +2,14 @@ package middlewares
 
 import (
 	"encoding/base64"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm/utils"
 	"kma_score_api/database"
 	"kma_score_api/models"
 	"kma_score_api/utils/aes"
 	"log"
+	"strconv"
+	"time"
 )
 
 // Config defines the config for middleware.
@@ -31,7 +32,7 @@ type Config struct {
 	// Api time deviation in second
 	//
 	// Optional. Default: 60
-	ApiTimeDeviation int
+	ApiTimeDeviation int64
 }
 
 // ConfigDefault is the default config
@@ -75,7 +76,7 @@ func New(config ...Config) fiber.Handler {
 		}
 
 		// Don't execute if router is in black list
-		routerPath := c.Route().Path
+		routerPath := c.Path()
 
 		if utils.Contains(cfg.BackList, routerPath) {
 			return c.Next()
@@ -99,18 +100,35 @@ func New(config ...Config) fiber.Handler {
 		var keyDecoded, err = base64.StdEncoding.DecodeString(key.Secret)
 
 		if err != nil {
-			log.Print(result.Error)
+			log.Print("Base64 decode error: ", result.Error)
 			return fiber.ErrForbidden
 		}
 
-		var decoded string
-		decoded, err = aes.DecryptGCM(keyDecoded, clientSecretHash)
+		var decoded []byte
+		decoded, err = aes.DecryptCBC(keyDecoded, clientSecretHash)
 
-		fmt.Println(decoded)
+		if err != nil {
+			log.Print("Decrypt Error: ", result.Error)
+			return fiber.ErrForbidden
+		}
 
-		//clientApiSecret := c.Get(apiSecretField)
-		//
-		//fmt.Println(reqHeaders)
+		//1678157885
+		//e10974ffdc1a5d865c3c5e5e3f6c4f5d.e0ef8abe0a7f2c7a04b44958469b081c
+
+		var currentTs int64
+		currentTs, err = strconv.ParseInt(string(decoded), 10, 0)
+
+		if err != nil {
+			log.Print("ParseInt error: ", err)
+			return fiber.ErrForbidden
+		}
+
+		currentTimestamp := time.Now().Unix()
+
+		if currentTimestamp-currentTs > cfg.ApiTimeDeviation {
+			log.Print("Oh No API expired")
+			return fiber.ErrForbidden
+		}
 
 		return c.Next()
 	}
@@ -119,7 +137,7 @@ func New(config ...Config) fiber.Handler {
 func ApiChecker() fiber.Handler {
 	return New(Config{
 		Enable:           true,
-		BackList:         []string{},
-		ApiTimeDeviation: 60000,
+		BackList:         []string{"/", "/api/aes/generateKey"},
+		ApiTimeDeviation: 180, // 3 mins
 	})
 }
