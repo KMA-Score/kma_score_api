@@ -9,6 +9,7 @@ import (
 	"kma_score_api/middlewares"
 	"kma_score_api/utils"
 	"log"
+	"os"
 )
 
 func main() {
@@ -17,16 +18,20 @@ func main() {
 	LogToFile, LogToTerminal, err := middlewares.Logger()
 	Cors := middlewares.Cors()
 	Limiter := middlewares.Limiter()
+	ApiChecker := middlewares.ApiChecker()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	database.Connect()
-	utils.MeilisearchInit()
 
-	// IMPORTANT: cron must be init before http startup and after database + meiliSearch init
-	cron.InitCron()
+	if os.Getenv("MEILISEARCH_ENABLED") == "true" {
+		utils.MeilisearchInit()
+
+		// IMPORTANT: cron must be init before http startup and after database + meiliSearch init
+		cron.InitCron()
+	}
 
 	app := fiber.New(fiber.Config{})
 
@@ -35,6 +40,7 @@ func main() {
 	app.Use(LogToTerminal)
 	app.Use(Cors)
 	app.Use(Limiter)
+	app.Use(ApiChecker)
 
 	// routes
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -55,6 +61,9 @@ func main() {
 
 	// SSO Auth
 	app.Post("/auth/userLoginReq", handlers.AuthToken)
+
+	// Generate key
+	app.Get("/api/aes/generateKey", handlers.GenerateClientSecret)
 
 	app.All("*", func(c *fiber.Ctx) error {
 		return c.Status(404).JSON(utils.ApiResponse(404, "Not found", fiber.Map{}))

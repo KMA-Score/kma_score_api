@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"kma_score_api/models"
 	"log"
 	"os"
 )
@@ -19,6 +20,9 @@ func Connect() {
 	}
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	// Auto migrate models if not exists
+	err = db.AutoMigrate(&models.ApiKey{})
 
 	if err != nil {
 		log.Fatal(err)
