@@ -8,20 +8,6 @@ services:
       - ./.env
     ports:
       - ${PORT}:8080
-    environment:
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - MEILISEARCH_HOST=${MEILISEARCH_HOST}
-      - MEILISEARCH_PORT=${MEILISEARCH_PORT}
-      - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
-      - JWT_CLIENT_PUBLIC_KEY=${JWT_CLIENT_PUBLIC_KEY}
-      - JWT_SERVER_PRIVATE_KEY=${JWT_SERVER_PRIVATE_KEY}
-    links:
-      - meilisearch
-      - mariadb
     depends_on:
       - meilisearch
       - mariadb
