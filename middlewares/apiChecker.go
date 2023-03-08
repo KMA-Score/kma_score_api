@@ -110,8 +110,8 @@ func New(config ...Config) fiber.Handler {
 		decoded, err = aes.DecryptCBC(keyDecoded, clientSecretHash)
 
 		if err != nil {
-			log.Print("Decrypt Error: ", result.Error)
-			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Decrypt error", nil))
+			log.Print("Decrypt Error: ", err)
+			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Decrypt error or wrong key", nil))
 		}
 
 		//1678157885

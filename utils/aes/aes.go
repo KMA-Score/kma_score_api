@@ -8,6 +8,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"strings"
 )
 
@@ -20,11 +21,15 @@ func GenerateAESKey() ([]byte, error) {
 }
 
 // PKCS5UnPadding  pads a certain blob of data with necessary data to be used in AES block cipher
-func PKCS5UnPadding(src []byte) []byte {
+func PKCS5UnPadding(src []byte) ([]byte, error) {
 	length := len(src)
 	unpadding := int(src[length-1])
 
-	return src[:(length - unpadding)]
+	if length < unpadding {
+		return nil, fmt.Errorf("decrypting error! Maybe wrong key")
+	}
+
+	return src[:(length - unpadding)], nil
 }
 
 func DecryptCBC(key []byte, encrypted string) ([]byte, error) {
@@ -49,7 +54,12 @@ func DecryptCBC(key []byte, encrypted string) ([]byte, error) {
 	mode := cipher.NewCBCDecrypter(block, iv)
 	decryptedText := make([]byte, len(ciphertext))
 	mode.CryptBlocks(decryptedText, ciphertext)
-	decryptedText = PKCS5UnPadding(decryptedText)
+
+	decryptedText, err = PKCS5UnPadding(decryptedText)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return decryptedText, nil
 }
