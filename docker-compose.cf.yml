@@ -18,9 +18,14 @@ services:
       - JWT_CLIENT_PUBLIC_KEY=${JWT_CLIENT_PUBLIC_KEY}
       - JWT_SERVER_PRIVATE_KEY=${JWT_SERVER_PRIVATE_KEY}
     links:
-        - meilisearch
+      - meilisearch
+      - mariadb
+    depends_on:
+      - meilisearch
+      - mariadb
     networks:
       - proxy
+      - kma_score
 
   meilisearch:
     container_name: meilisearch
@@ -33,7 +38,7 @@ services:
       - MEILI_ENV=${MEILISEARCH_ENV:-production}
       - MEILI_DB_PATH=${MEILISEARCH_DB_PATH:-/data.ms}
     networks:
-      - proxy
+      - kma_score
 
   mariadb:
     container_name: mariadb
@@ -48,9 +53,10 @@ services:
     volumes:
       - ./data:/var/lib/mysql
     networks:
-      - proxy
+      - kma_score
 
 networks:
   proxy:
     external: true
     name: "cloudflared_proxy"
+  kma_score:

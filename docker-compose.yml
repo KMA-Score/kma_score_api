@@ -19,6 +19,12 @@ services:
       - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
       - JWT_CLIENT_PUBLIC_KEY=${JWT_CLIENT_PUBLIC_KEY}
       - JWT_SERVER_PRIVATE_KEY=${JWT_SERVER_PRIVATE_KEY}
+    links:
+      - meilisearch
+      - mariadb
+    depends_on:
+      - meilisearch
+      - mariadb
     networks:
       - kma_score_network
 
@@ -52,5 +58,3 @@ services:
 
 networks:
   kma_score_network:
-    external: true
-    name: "kma_score_network"
