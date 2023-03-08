@@ -42,10 +42,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
-            # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
+          tags: latest
 
       - name: Build and push
         uses: docker/build-push-action@v4
