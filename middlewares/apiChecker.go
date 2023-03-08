@@ -6,8 +6,10 @@ import (
 	"gorm.io/gorm/utils"
 	"kma_score_api/database"
 	"kma_score_api/models"
+	littleUtils "kma_score_api/utils"
 	"kma_score_api/utils/aes"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
@@ -94,14 +96,14 @@ func New(config ...Config) fiber.Handler {
 
 		if result.RowsAffected == 0 {
 			log.Print(result.Error)
-			return fiber.ErrForbidden
+			return c.Status(403).JSON(littleUtils.ApiResponse(403, "Key Not Found", nil))
 		}
 
 		var keyDecoded, err = base64.StdEncoding.DecodeString(key.Secret)
 
 		if err != nil {
 			log.Print("Base64 decode error: ", result.Error)
-			return fiber.ErrForbidden
+			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Base64 decode error", nil))
 		}
 
 		var decoded []byte
@@ -109,7 +111,7 @@ func New(config ...Config) fiber.Handler {
 
 		if err != nil {
 			log.Print("Decrypt Error: ", result.Error)
-			return fiber.ErrForbidden
+			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Decrypt error", nil))
 		}
 
 		//1678157885
@@ -120,14 +122,14 @@ func New(config ...Config) fiber.Handler {
 
 		if err != nil {
 			log.Print("ParseInt error: ", err)
-			return fiber.ErrForbidden
+			return c.Status(500).JSON(littleUtils.ApiResponse(500, "ParseInt error", nil))
 		}
 
 		currentTimestamp := time.Now().Unix()
 
 		if currentTimestamp-currentTs > cfg.ApiTimeDeviation {
 			log.Print("Oh No API expired")
-			return fiber.ErrForbidden
+			return c.Status(403).JSON(littleUtils.ApiResponse(403, "API Key Hash Expired", nil))
 		}
 
 		return c.Next()
@@ -135,9 +137,15 @@ func New(config ...Config) fiber.Handler {
 }
 
 func ApiChecker() fiber.Handler {
+	enableKey := false
+
+	if enableKeyEnv, err := strconv.ParseBool(os.Getenv("ENABLE_API_KEY")); err == nil {
+		enableKey = enableKeyEnv
+	}
+
 	return New(Config{
-		Enable:           true,
+		Enable:           enableKey,
 		BackList:         []string{"/", "/api/aes/generateKey"},
-		ApiTimeDeviation: 180, // 3 mins
+		ApiTimeDeviation: 60, // 1 mins
 	})
 }

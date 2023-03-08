@@ -8,8 +8,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
-	"io"
 	"strings"
 )
 
@@ -19,36 +17,6 @@ func GenerateAESKey() ([]byte, error) {
 		return nil, err
 	}
 	return key, nil
-}
-
-func EncryptGCM(key []byte, message string) (string, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	// Generate a random nonce
-	nonce := make([]byte, 12)
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return "", err
-	}
-
-	// Create a new GCM block cipher
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return "", err
-	}
-
-	// Encrypt the message using GCM mode
-	ciphertext := aesgcm.Seal(nil, nonce, []byte(message), nil)
-
-	//// Concatenate the nonce and ciphertext
-	//encrypted := append(nonce, ciphertext...)
-	//
-	//// Encode the encrypted message as a base64 string
-	//return base64.StdEncoding.EncodeToString(encrypted), nil
-
-	return fmt.Sprintf("%x.%x.%x", ciphertext, nonce, aesgcm.Seal(nil, nonce, nil, nil)), nil
 }
 
 // PKCS5UnPadding  pads a certain blob of data with necessary data to be used in AES block cipher

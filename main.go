@@ -9,6 +9,7 @@ import (
 	"kma_score_api/middlewares"
 	"kma_score_api/utils"
 	"log"
+	"os"
 )
 
 func main() {
@@ -24,10 +25,13 @@ func main() {
 	}
 
 	database.Connect()
-	utils.MeilisearchInit()
 
-	// IMPORTANT: cron must be init before http startup and after database + meiliSearch init
-	cron.InitCron()
+	if os.Getenv("MEILISEARCH_ENABLED") == "true" {
+		utils.MeilisearchInit()
+
+		// IMPORTANT: cron must be init before http startup and after database + meiliSearch init
+		cron.InitCron()
+	}
 
 	app := fiber.New(fiber.Config{})
 
