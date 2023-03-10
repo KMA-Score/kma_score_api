@@ -1,9 +1,13 @@
 name: Deploy to VPS
 
 on:
-  push:
-    tags:
-      - "**"
+  workflow_run:
+    workflows:
+      - "Docker Image CI"
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
   deploy:
