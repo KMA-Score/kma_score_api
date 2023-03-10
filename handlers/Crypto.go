@@ -12,11 +12,10 @@ import (
 
 // Credit: ChatGPT
 func generateAPIKey() string {
-	// Generate random character
 	rand.Seed(time.Now().UnixNano())
 	randomChar := string(rune(rand.Intn(26) + 97)) // lowercase alphabet
 
-	// Get current date in ddmmYY format
+	// Get current date in ddmmyy format
 	currentDate := time.Now().Format("020106")
 
 	// Concatenate date and random character
