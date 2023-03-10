@@ -1,17 +1,20 @@
 name: Deploy to VPS
 
 on:
-  workflow_run:
-    workflows:
-      - "Docker Image CI"
-    types:
-      - completed
-    branches:
-      - main
+  push:
+    tags:
+      - "**"
 
 jobs:
+  start-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Deploy
+        run: echo "Starting..."
+
+
   deploy:
-    needs: build
+    needs: docker-img.yml
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to VPS
