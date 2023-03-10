@@ -1,0 +1,24 @@
+name: Deploy to VPS
+
+on:
+  push:
+    tags:
+      - "**"
+
+jobs:
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_KEY }}
+          port: 22
+          script: |
+            cd kma_score_api
+            docker compose down
+            docker compose pull
+            docker compose -f docker-compose.cf.yml up -d

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/utils"
 	"kma_score_api/database"
 	"kma_score_api/models"
-	littleUtils "kma_score_api/utils"
+	kmaScoreUtils "kma_score_api/utils"
 	"kma_score_api/utils/aes"
 	"log"
 	"os"
@@ -29,7 +29,7 @@ type Config struct {
 	// Exclude domain list. There domains will not require key
 	//
 	// Optional. Default: []
-	BackList []string
+	Exclude []string
 
 	// Api time deviation in second
 	//
@@ -37,11 +37,10 @@ type Config struct {
 	ApiTimeDeviation int64
 }
 
-// ConfigDefault is the default config
-var ConfigDefault = Config{
+var DefaultConfig = Config{
 	Next:             nil,
 	Enable:           true,
-	BackList:         []string{},
+	Exclude:          []string{},
 	ApiTimeDeviation: 60,
 }
 
@@ -50,10 +49,9 @@ const (
 	apiSecretHashField = "X-KMA-API-SECRET-HASH"
 )
 
-// New creates a new middleware handler
 func New(config ...Config) fiber.Handler {
 	// Set default config
-	cfg := ConfigDefault
+	cfg := DefaultConfig
 
 	// Override config if provided
 	if len(config) > 0 {
@@ -61,7 +59,7 @@ func New(config ...Config) fiber.Handler {
 
 		// Set default values
 		if cfg.Next == nil {
-			cfg.Next = ConfigDefault.Next
+			cfg.Next = DefaultConfig.Next
 		}
 	}
 
@@ -80,7 +78,7 @@ func New(config ...Config) fiber.Handler {
 		// Don't execute if router is in black list
 		routerPath := c.Path()
 
-		if utils.Contains(cfg.BackList, routerPath) {
+		if utils.Contains(cfg.Exclude, routerPath) {
 			return c.Next()
 		}
 
@@ -96,14 +94,14 @@ func New(config ...Config) fiber.Handler {
 
 		if result.RowsAffected == 0 {
 			log.Print(result.Error)
-			return c.Status(403).JSON(littleUtils.ApiResponse(403, "Key Not Found", nil))
+			return c.Status(403).JSON(kmaScoreUtils.ApiResponse(403, "Key Not Found", nil))
 		}
 
 		var keyDecoded, err = base64.StdEncoding.DecodeString(key.Secret)
 
 		if err != nil {
 			log.Print("Base64 decode error: ", result.Error)
-			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Base64 decode error", nil))
+			return c.Status(500).JSON(kmaScoreUtils.ApiResponse(500, "Base64 decode error", nil))
 		}
 
 		var decoded []byte
@@ -111,7 +109,7 @@ func New(config ...Config) fiber.Handler {
 
 		if err != nil {
 			log.Print("Decrypt Error: ", err)
-			return c.Status(500).JSON(littleUtils.ApiResponse(500, "Decrypt error or wrong key", nil))
+			return c.Status(500).JSON(kmaScoreUtils.ApiResponse(500, "Decrypt error or wrong key", nil))
 		}
 
 		//1678157885
@@ -122,14 +120,14 @@ func New(config ...Config) fiber.Handler {
 
 		if err != nil {
 			log.Print("ParseInt error: ", err)
-			return c.Status(500).JSON(littleUtils.ApiResponse(500, "ParseInt error", nil))
+			return c.Status(500).JSON(kmaScoreUtils.ApiResponse(500, "ParseInt error", nil))
 		}
 
 		currentTimestamp := time.Now().Unix()
 
 		if currentTimestamp-currentTs > cfg.ApiTimeDeviation {
 			log.Print("Oh No API expired")
-			return c.Status(403).JSON(littleUtils.ApiResponse(403, "API Key Hash Expired", nil))
+			return c.Status(403).JSON(kmaScoreUtils.ApiResponse(403, "API Key Hash Expired", nil))
 		}
 
 		return c.Next()
@@ -145,7 +143,7 @@ func ApiChecker() fiber.Handler {
 
 	return New(Config{
 		Enable:           enableKey,
-		BackList:         []string{"/", "/api/aes/generateKey"},
-		ApiTimeDeviation: 60, // 1 mins
+		Exclude:          []string{"/", "/api/aes/generateKey"},
+		ApiTimeDeviation: 60, // 1 min
 	})
 }
