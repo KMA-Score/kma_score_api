@@ -7,7 +7,6 @@ import (
 	"kma_score_api/database"
 	"kma_score_api/models"
 	kmaScoreUtils "kma_score_api/utils"
-	"kma_score_api/utils/aes"
 	"log"
 	"os"
 	"strconv"
@@ -105,7 +104,7 @@ func New(config ...Config) fiber.Handler {
 		}
 
 		var decoded []byte
-		decoded, err = aes.DecryptCBC(keyDecoded, clientSecretHash)
+		decoded, err = kmaScoreUtils.DecryptCBC(keyDecoded, clientSecretHash)
 
 		if err != nil {
 			log.Print("Decrypt Error: ", err)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"kma_score_api/utils"
-	"kma_score_api/utils/aes"
 	"math/rand"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ func generateAPIKey() string {
 }
 
 func GenerateClientSecret(c *fiber.Ctx) error {
-	secretKey, err := aes.GenerateAESKey()
+	secretKey, err := utils.GenerateAESKey()
 
 	if err != nil {
 		return c.Status(500).JSON(utils.ApiResponse(500, "Generate key error", err))
