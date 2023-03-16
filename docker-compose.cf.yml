@@ -12,6 +12,7 @@ services:
     networks:
       - proxy
       - kma_score
+    restart: on-failure
 
   meilisearch:
     container_name: meilisearch
@@ -25,6 +26,7 @@ services:
       - MEILI_DB_PATH=${MEILISEARCH_DB_PATH:-/data.ms}
     networks:
       - kma_score
+    restart: on-failure
 
   mariadb:
     container_name: mariadb
@@ -40,6 +42,7 @@ services:
       - ./data:/var/lib/mysql
     networks:
       - kma_score
+    restart: on-failure
 
 networks:
   proxy:

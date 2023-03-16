@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func AllSubject(c *fiber.Ctx) error {
+func GetAllSubjects(c *fiber.Ctx) error {
 	type Result struct {
 		ID              string `gorm:"column:Id" json:"id"`
 		Name            string `gorm:"column:Name" json:"name"`

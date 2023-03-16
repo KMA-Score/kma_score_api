@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"kma_score_api/utils"
-	"kma_score_api/utils/aes"
 	"math/rand"
 	"strings"
 	"time"
 )
 
-// Credit: ChatGPT
-func generateAPIKey() string {
+func GenerateAPIKey() string {
 	rand.Seed(time.Now().UnixNano())
 	randomChar := string(rune(rand.Intn(26) + 97)) // lowercase alphabet
 
@@ -37,13 +35,13 @@ func generateAPIKey() string {
 }
 
 func GenerateClientSecret(c *fiber.Ctx) error {
-	secretKey, err := aes.GenerateAESKey()
+	secretKey, err := utils.GenerateAESKey()
 
 	if err != nil {
 		return c.Status(500).JSON(utils.ApiResponse(500, "Generate key error", err))
 	}
 
-	apiKey := generateAPIKey()
+	apiKey := GenerateAPIKey()
 
 	rsp := fiber.Map{
 		"apiKey":    apiKey,

@@ -49,11 +49,13 @@ func main() {
 
 	app.Get("statistics", handlers.GeneralScoresStatistics)
 
-	app.Get("student/:StudentId", handlers.StudentStatistics)
+	app.Get("students", handlers.GetAllStudents)
+
+	app.Get("student/:StudentId", handlers.GetStudentScores)
 
 	app.Get("subject/:SubjectId", handlers.SubjectStatistics)
 
-	app.Get("/subjects", handlers.AllSubject)
+	app.Get("/subjects", handlers.GetAllSubjects)
 
 	app.Post("/add-score/:StudentId", handlers.AddScore)
 
