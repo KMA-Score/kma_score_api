@@ -9,8 +9,7 @@ import (
 	"time"
 )
 
-// Credit: ChatGPT
-func generateAPIKey() string {
+func GenerateAPIKey() string {
 	rand.Seed(time.Now().UnixNano())
 	randomChar := string(rune(rand.Intn(26) + 97)) // lowercase alphabet
 
@@ -42,7 +41,7 @@ func GenerateClientSecret(c *fiber.Ctx) error {
 		return c.Status(500).JSON(utils.ApiResponse(500, "Generate key error", err))
 	}
 
-	apiKey := generateAPIKey()
+	apiKey := GenerateAPIKey()
 
 	rsp := fiber.Map{
 		"apiKey":    apiKey,

@@ -85,7 +85,7 @@ func GeneralScoresStatistics(c *fiber.Ctx) error {
 	}))
 }
 
-func StudentStatistics(c *fiber.Ctx) error {
+func GetStudentScores(c *fiber.Ctx) error {
 	id := strings.ToUpper(c.Params("StudentId"))
 	var result models.Student
 
