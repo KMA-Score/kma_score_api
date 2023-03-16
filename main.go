@@ -49,6 +49,8 @@ func main() {
 
 	app.Get("statistics", handlers.GeneralScoresStatistics)
 
+	app.Get("students", handlers.GetAllStudents)
+
 	app.Get("student/:StudentId", handlers.StudentStatistics)
 
 	app.Get("subject/:SubjectId", handlers.SubjectStatistics)
