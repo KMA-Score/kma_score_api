@@ -20,8 +20,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           port: 22
           script: |
-            cd kma_score_api
+            cd /tp-share/kma_score_api
             git pull
-            docker compose down
             docker compose pull
             docker compose -f docker-compose.cf.yml up -d
