@@ -23,4 +23,4 @@ jobs:
             cd /tp-share/kma_score_api
             git pull
             docker compose pull
-            docker compose -f docker-compose.cf.yml up -d
+            docker compose -f docker-compose.npm.yml up -d
